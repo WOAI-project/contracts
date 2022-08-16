@@ -1852,7 +1852,7 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable 
     function _setGeneratorValue(uint256 tokenId, string memory _genVal) internal virtual {
         require(_exists(tokenId), "Token does not exist");
         require(bytes(generatorValue(tokenId)).length == 0, "Generator value has already been set");
-        _setTokenURI(tokenId, tokenId);
+        _setTokenURI(tokenId, Strings.toString(tokenId));
         _generatorValues[tokenId] = _genVal;
     }
 
@@ -2017,7 +2017,7 @@ contract WOAI is ERC721, Ownable {
     function reserveWoai() public onlyOwner {        
         uint supply = totalSupply();
         uint i;
-        for (i = 0; i < 10; i++) {
+        for (i = 0; i < 1; i++) {
             _safeMint(msg.sender, supply + i);
         }
     }
