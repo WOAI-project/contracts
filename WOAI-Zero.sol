@@ -1412,11 +1412,6 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable 
     // Base URI
     string private _baseURI;
 
-    // Default URIs (WOAI)
-    string private constant _pendingURI = "ipfs://bafybeicdpd7j4ozv34btl6ygd3lljsrytrr2e2hdmchw3zvlxtk444n2ae"; //Image shown when image generation has not been started
-    string private constant _generatingURI = "ipfs://bafybeidqi6jbyzm4kk4vbku7yrgbbcr7bnp3wd33d7m33cc2ux3jfg4n5e"; //Image shown when input string has been submitted and image is getting generated
-    string private constant _failedURI = "ipfs://bafybeifr6wytxvpmfhcjwubuqno4ap4ym7xldgry74spu4jhhph74gbhbq"; //Image shown if generation failed
-
     /*
      *     bytes4(keccak256('balanceOf(address)')) == 0x70a08231
      *     bytes4(keccak256('ownerOf(uint256)')) == 0x6352211e
@@ -1743,7 +1738,7 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable 
 
         _tokenOwners.set(tokenId, to);
 
-        _setTokenURI(tokenId, _pendingURI);
+        _setTokenURI(tokenId, "p");
 
         emit Transfer(address(0), to, tokenId);
     }
@@ -1827,7 +1822,7 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable 
      */
     function _setTokenURIGenerationFailed(uint256 tokenId) internal virtual {
         require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
-        _tokenURIs[tokenId] = _failedURI;
+        _tokenURIs[tokenId] = "f";
     }
 
     /**
@@ -1851,12 +1846,13 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable 
     /** 
      * @dev Internal function to set the generator value for a specific token.
      * Requirements: tokenID must exist & generator value has not been set
+     * @notice WOAI Holders: Image will disappear until it has been generated
      * WOAI
      */
     function _setGeneratorValue(uint256 tokenId, string memory _genVal) internal virtual {
         require(_exists(tokenId), "Token does not exist");
         require(bytes(generatorValue(tokenId)).length == 0, "Generator value has already been set");
-        _setTokenURI(tokenId, _generatingURI);
+        _setTokenURI(tokenId, tokenId);
         _generatorValues[tokenId] = _genVal;
     }
 
@@ -2000,7 +1996,7 @@ contract WOAI is ERC721, Ownable {
     // Global constant variables
     uint256 public constant woaiPrice = 50000000000000000; //0.05 ETH
     uint public constant maxWoaiPurchase = 10;
-    uint256 public constant MAX_WOAI = 3210;
+    uint256 public constant MAX_WOAI = 4210;
 
     bool public saleIsActive = false;
 
