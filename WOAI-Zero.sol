@@ -1822,7 +1822,7 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable 
      */
     function _setTokenURIGenerationFailed(uint256 tokenId) internal virtual {
         require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
-        _tokenURIs[tokenId] = "f";
+        _tokenURIs[tokenId] = "f"; //This will point the URI to the default failure json
     }
 
     /**
@@ -1996,11 +1996,19 @@ contract WOAI is ERC721, Ownable {
     // Global constant variables
     uint256 public constant woaiPrice = 50000000000000000; //0.05 ETH
     uint public constant maxWoaiPurchase = 10;
-    uint256 public constant MAX_WOAI = 4210;
+    uint256 public constant MAX_WOAI = 2500;
 
     bool public saleIsActive = false;
 
-    constructor(string memory name, string memory symbol) ERC721(name, symbol) {
+    // WOAI generation limiter
+    uint internal period;
+    uint internal limit;
+    uint internal currentPeriodEnd;
+    uint internal currentPeriodAmount;
+
+    constructor() ERC721("World of AI", "WOAI") {
+        period = 7200;      //7200 blocks ~24 hours (7200/24/60=5)
+        limit = 25;         //25 per day (takes min 50 days to generate all)
     }
 
     /**
@@ -2012,12 +2020,12 @@ contract WOAI is ERC721, Ownable {
     }
 
     /**
-     * @dev Reserves 10 WOAI supply for treasury (only owner)
+     * @dev Reserves 1% (25pcs) WOAI supply for treasury (only owner)
      */
     function reserveWoai() public onlyOwner {        
         uint supply = totalSupply();
         uint i;
-        for (i = 0; i < 1; i++) {
+        for (i = 0; i < 25; i++) {
             _safeMint(msg.sender, supply + i);
         }
     }
@@ -2105,12 +2113,36 @@ contract WOAI is ERC721, Ownable {
      * your image. Choose your words wisely as even a slight difference will
      * impact the result. Max 100 characters per message. Please read the
      * rules before setting the generator value; invalid queries will lead
-     * to a failed image (this is irreversible).
+     * to a failed image (this is irreversible). Limited to approximately 25/day
      */
     function setGeneratorValue(uint tokenId, string memory genVal) public {
         require(ownerOf(tokenId) == msg.sender,"Only token owner can set the generator value");
         require(bytes(genVal).length <= 100, "Maximum 100 characters");
+        updatePeriod(); //Update period before proceeding
+
+        // Check that generator limits are not exceeded and disallow if yes
+        require(currentPeriodAmount < limit,"The generation limit has been reached for today. Try again tomorrow!");
+        
         _setGeneratorValue(tokenId, genVal);
+        currentPeriodAmount++;
+    }
+
+    /**
+     * @dev limits the amount of generator value setting to approximately 25/day
+     */
+    function updatePeriod() internal {
+        if (currentPeriodEnd < block.number) {
+            currentPeriodEnd = block.number + period;
+            currentPeriodAmount = 0;
+        }
+    }
+
+    /**
+     * @notice Checks if generation is currently paused due to hitting
+     * the generation limits. Returns false if generation is allowed.
+     */
+    function generationPaused() public view returns(bool) {
+        return ((currentPeriodAmount >= limit) && (currentPeriodEnd >= block.number));
     }
 
 }
