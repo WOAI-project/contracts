@@ -2006,7 +2006,7 @@ contract WOAI is ERC721, Ownable {
     uint internal currentPeriodEnd;
     uint internal currentPeriodAmount;
 
-    constructor() ERC721("World of AI", "WOAI") {
+    constructor() ERC721("World of AI/Zero", "WOAI/Z") {
         period = 7200;      //7200 blocks ~24 hours (7200/24/60=5)
         limit = 25;         //25 per day (takes min 50 days to generate all)
     }
