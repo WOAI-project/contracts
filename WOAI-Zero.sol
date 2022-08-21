@@ -2008,7 +2008,7 @@ contract WOAI is ERC721, Ownable {
 
     constructor() ERC721("World of AI/Zero", "WOAI/Z") {
         period = 7200;      //7200 blocks ~24 hours (7200/24/60=5)
-        limit = 25;         //25 per day (takes min 50 days to generate all)
+        limit = 25;         //25 per day (takes min 100 days to generate all)
     }
 
     /**
@@ -2111,13 +2111,13 @@ contract WOAI is ERC721, Ownable {
      * @dev sets value used to generate the AI art
      * @notice Use this function to set the input for the AI model generating
      * your image. Choose your words wisely as even a slight difference will
-     * impact the result. Max 100 characters per message. Please read the
+     * impact the result. Max 256 characters per message. Please read the
      * rules before setting the generator value; invalid queries will lead
      * to a failed image (this is irreversible). Limited to approximately 25/day
      */
     function setGeneratorValue(uint tokenId, string memory genVal) public {
         require(ownerOf(tokenId) == msg.sender,"Only token owner can set the generator value");
-        require(bytes(genVal).length <= 100, "Maximum 100 characters");
+        require(bytes(genVal).length <= 256, "Maximum 256 characters");
         updatePeriod(); //Update period before proceeding
 
         // Check that generator limits are not exceeded and disallow if yes
