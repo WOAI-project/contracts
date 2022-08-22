@@ -2027,6 +2027,9 @@ contract WOAI is ERC721, Ownable {
 
     bool public saleIsActive = false;
 
+    // Limit the amount of WOAI that can be reserved
+    uint internal woaiReserveRunCount = 0;
+
     // WOAI generation limiter
     uint internal period;
     uint internal limit;
@@ -2048,13 +2051,18 @@ contract WOAI is ERC721, Ownable {
 
     /**
      * @dev Reserves 1% (25pcs) WOAI supply for treasury (only owner)
+     * The function is called 5 times before sale starts to reserve a total of
+     * 125 WOAI. Hence, the limit will be reached and there is no need to compare
+     * against max supply.
      */
-    function reserveWoai() public onlyOwner {        
+    function reserveWoai() public onlyOwner {  
+        require(woaiReserveRunCount < 5,"Reserve cap exceeded");      
         uint supply = totalSupply();
         uint i;
         for (i = 0; i < 25; i++) {
             _safeMint(msg.sender, supply + i);
         }
+        woaiReserveRunCount++;
     }
 
     /**
