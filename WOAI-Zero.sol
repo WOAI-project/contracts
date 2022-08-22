@@ -1409,6 +1409,9 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable 
     mapping (address => uint) private _referrerCounts;
     address[] _nonZeroReferrers;
 
+    // WOAI Manual pausing
+    bool private _manualPause;
+
     // Base URI
     string private _baseURI;
 
@@ -1452,6 +1455,7 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable 
     constructor (string memory name_, string memory symbol_) public {
         _name = name_;
         _symbol = symbol_;
+        _manualPause = false;
 
         // register the supported interfaces to conform to ERC721 via ERC165
         _registerInterface(_INTERFACE_ID_ERC721);
@@ -1704,6 +1708,28 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable 
             }
         }
         return (topRef,maxVal);
+    }
+
+
+    /**
+     * @dev Pauses setting generator values. (only owner)
+     */
+    function _pauseGenerator() internal {
+        _manualPause = true;
+    }
+
+    /**
+     * @dev Unpauses settinge generator values. (only owner)
+     */
+    function _unpauseGenerator() internal {
+        _manualPause = false;
+    }
+
+    /** 
+     @dev Returns the state of manual pausing (true for paused)
+     */
+    function isManuallyPaused() public view returns(bool) {
+        return _manualPause;
     }
 
 
@@ -1965,7 +1991,8 @@ abstract contract Ownable is Context {
      * NOTE: Renouncing ownership will leave the contract without an owner,
      * thereby removing any functionality that is only available to the owner.
      */
-    function renounceOwnership() public virtual onlyOwner {
+    function renounceOwnership(bool areYouSure) public virtual onlyOwner {
+        require(areYouSure, "You weren't sure");
         emit OwnershipTransferred(_owner, address(0));
         _owner = address(0);
     }
@@ -2118,6 +2145,7 @@ contract WOAI is ERC721, Ownable {
     function setGeneratorValue(uint tokenId, string memory genVal) public {
         require(ownerOf(tokenId) == msg.sender,"Only token owner can set the generator value");
         require(bytes(genVal).length <= 256, "Maximum 256 characters");
+        require(!isManuallyPaused(), "The generator is currently paused");
         updatePeriod(); //Update period before proceeding
 
         // Check that generator limits are not exceeded and disallow if yes
@@ -2138,11 +2166,25 @@ contract WOAI is ERC721, Ownable {
     }
 
     /**
+     * @dev Pauses setting generator values. (only owner)
+     */
+    function pauseGenerator() public onlyOwner {
+        _pauseGenerator();
+    }
+
+    /**
+     * @dev Unpauses settinge generator values. (only owner)
+     */
+    function unpauseGenerator() public onlyOwner {
+        _unpauseGenerator();
+    }
+
+    /**
      * @notice Checks if generation is currently paused due to hitting
      * the generation limits. Returns false if generation is allowed.
      */
     function generationPaused() public view returns(bool) {
-        return ((currentPeriodAmount >= limit) && (currentPeriodEnd >= block.number));
+        return (((currentPeriodAmount >= limit) && (currentPeriodEnd >= block.number)) || (isManuallyPaused()));
     }
 
 }
