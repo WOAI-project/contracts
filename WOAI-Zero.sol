@@ -1991,7 +1991,7 @@ abstract contract Ownable is Context {
      * NOTE: Renouncing ownership will leave the contract without an owner,
      * thereby removing any functionality that is only available to the owner.
      */
-    function renounceOwnership(bool areYouSure) public virtual onlyOwner {
+    function renounceOwnership(bool areYouSure) external virtual onlyOwner {
         require(areYouSure, "You weren't sure");
         emit OwnershipTransferred(_owner, address(0));
         _owner = address(0);
@@ -2001,7 +2001,7 @@ abstract contract Ownable is Context {
      * @dev Transfers ownership of the contract to a new account (`newOwner`).
      * Can only be called by the current owner.
      */
-    function transferOwnership(address newOwner) public virtual onlyOwner {
+    function transferOwnership(address newOwner) external virtual onlyOwner {
         require(newOwner != address(0), "Ownable: new owner is the zero address");
         emit OwnershipTransferred(_owner, newOwner);
         _owner = newOwner;
@@ -2011,7 +2011,21 @@ abstract contract Ownable is Context {
 
 pragma solidity ^0.7.0;
 
+/**
 
+    ░██╗░░░░░░░██╗░█████╗░░█████╗░██╗░░░░██╗███████╗███████╗██████╗░░█████╗░
+    ░██║░░██╗░░██║██╔══██╗██╔══██╗██║░░░██╔╝╚════██║██╔════╝██╔══██╗██╔══██╗
+    ░╚██╗████╗██╔╝██║░░██║███████║██║░░██╔╝░░░███╔═╝█████╗░░██████╔╝██║░░██║
+    ░░████╔═████║░██║░░██║██╔══██║██║░██╔╝░░██╔══╝░░██╔══╝░░██╔══██╗██║░░██║
+    ░░╚██╔╝░╚██╔╝░╚█████╔╝██║░░██║██║██╔╝░░░███████╗███████╗██║░░██║╚█████╔╝
+    ░░░╚═╝░░░╚═╝░░░╚════╝░╚═╝░░╚═╝╚═╝╚═╝░░░░╚══════╝╚══════╝╚═╝░░╚═╝░╚════╝░
+    
+
+    READ THE TERMS AND CONDITIONS AT http://woai-data.woai.io/terms.html CAREFULLY BEFORE CONFIRMING
+    YOUR INTENT TO BE BOUND BY THEM. WOAI RESERVES THE RIGHT AT ANY TIME, AND FROM TIME TO TIME, TO
+    CHANGE THE TERMS AND CONDITIONS OF THIS NFT CONTRACT WITHOUT NOTICE TO THE NFT HOLDER(S).
+
+*/
 
 /**
  * @title WOAI contract
@@ -2044,7 +2058,7 @@ contract WOAI is ERC721, Ownable {
     /**
      * @dev Withdraws balance from the WOAI contract (only owner)
      */
-    function withdraw() public onlyOwner {
+    function withdraw() external onlyOwner {
         uint balance = address(this).balance;
         msg.sender.transfer(balance);
     }
@@ -2055,7 +2069,7 @@ contract WOAI is ERC721, Ownable {
      * 125 WOAI. Hence, the limit will be reached and there is no need to compare
      * against max supply.
      */
-    function reserveWoai() public onlyOwner {  
+    function reserveWoai() external onlyOwner {  
         require(woaiReserveRunCount < 5,"Reserve cap exceeded");      
         uint supply = totalSupply();
         uint i;
@@ -2068,7 +2082,7 @@ contract WOAI is ERC721, Ownable {
     /**
      * @dev Sets the base token URI (only owner)
      */
-    function setBaseURI(string memory baseURI) public onlyOwner {
+    function setBaseURI(string memory baseURI) external onlyOwner {
         _setBaseURI(baseURI);
     }
 
@@ -2076,7 +2090,7 @@ contract WOAI is ERC721, Ownable {
      * @dev Sets the Token URI for a particular WOAI. Used to point the token
      * to the right image file after art has been generated (only owner)
      */
-    function setTokenURI(uint tokenId, string memory tokenUri) public onlyOwner {
+    function setTokenURI(uint tokenId, string memory tokenUri) external onlyOwner {
         _setTokenURI(tokenId, tokenUri);
     }
 
@@ -2084,21 +2098,21 @@ contract WOAI is ERC721, Ownable {
      * @dev Sets the Token URI for a particular WOAI. Used when the generator
      * value was illegal. (only owner)
      */
-    function setTokenURIGenerationFailed(uint tokenId) public onlyOwner {
+    function setTokenURIGenerationFailed(uint tokenId) external onlyOwner {
         _setTokenURIGenerationFailed(tokenId);
     }
 
     /** 
      * @dev Starts the sale of WOAI (onlyOwner)
      */
-    function startSale() public onlyOwner {
+    function startSale() external onlyOwner {
         saleIsActive = true;
     }
 
     /**
      * @dev Ends the sale of WOAI (onlyOwner)
      */
-    function endSale() public onlyOwner {
+    function endSale() external onlyOwner {
         saleIsActive = false;
     }
 
@@ -2107,7 +2121,7 @@ contract WOAI is ERC721, Ownable {
      * You can mint a maximum of 10 tokens. Remember to include enough Ether with
      * your transaction to cover the cost of tokens.
      */
-    function mintWoai(uint numberOfTokens) public payable {
+    function mintWoai(uint numberOfTokens) external payable {
         require(saleIsActive, "Sale must be active to mint a WOAI");
         require(numberOfTokens <= maxWoaiPurchase, "Can only mint 10 tokens at a time");
         require(totalSupply().add(numberOfTokens) <= MAX_WOAI, "Purchase would exceed max supply of WOAI");
@@ -2126,7 +2140,7 @@ contract WOAI is ERC721, Ownable {
      * You can mint a maximum of 10 tokens. Remember to include enough Ether with
      * your transaction to cover the cost of tokens. Lets you pass a referrer.
      */
-    function mintAndRefer(uint numberOfTokens, address referrer) public payable {
+    function mintAndRefer(uint numberOfTokens, address referrer) external payable {
         require(saleIsActive, "Sale must be active to mint a WOAI");
         require(numberOfTokens <= maxWoaiPurchase, "Can only mint 10 tokens at a time");
         require(totalSupply().add(numberOfTokens) <= MAX_WOAI, "Purchase would exceed max supply of WOAI");
@@ -2135,9 +2149,7 @@ contract WOAI is ERC721, Ownable {
         
         for(uint i = 0; i < numberOfTokens; i++) {
             uint mintIndex = totalSupply();
-            if (totalSupply() < MAX_WOAI) {
-                _referAndMint(msg.sender, mintIndex, referrer);
-            }
+            _referAndMint(msg.sender, mintIndex, referrer);
         }
     }
 
@@ -2150,7 +2162,7 @@ contract WOAI is ERC721, Ownable {
      * rules before setting the generator value; invalid queries will lead
      * to a failed image (this is irreversible). Limited to approximately 25/day
      */
-    function setGeneratorValue(uint tokenId, string memory genVal) public {
+    function setGeneratorValue(uint tokenId, string memory genVal) external {
         require(ownerOf(tokenId) == msg.sender,"Only token owner can set the generator value");
         require(bytes(genVal).length <= 256, "Maximum 256 characters");
         require(!isManuallyPaused(), "The generator is currently paused");
@@ -2176,14 +2188,14 @@ contract WOAI is ERC721, Ownable {
     /**
      * @dev Pauses setting generator values. (only owner)
      */
-    function pauseGenerator() public onlyOwner {
+    function pauseGenerator() external onlyOwner {
         _pauseGenerator();
     }
 
     /**
      * @dev Unpauses settinge generator values. (only owner)
      */
-    function unpauseGenerator() public onlyOwner {
+    function unpauseGenerator() external onlyOwner {
         _unpauseGenerator();
     }
 
@@ -2191,7 +2203,7 @@ contract WOAI is ERC721, Ownable {
      * @notice Checks if generation is currently paused due to hitting
      * the generation limits. Returns false if generation is allowed.
      */
-    function generationPaused() public view returns(bool) {
+    function generationPaused() external view returns(bool) {
         return (((currentPeriodAmount >= limit) && (currentPeriodEnd >= block.number)) || (isManuallyPaused()));
     }
 
