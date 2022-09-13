@@ -18,6 +18,14 @@
         {
             "trait_type": "Creator",
             "value": "{creator}"
+        },
+        {
+            "trait_type": "Rewards Participant",
+            "value": "{whether participated in the rewards programme or not}"
+        },
+        {
+            "trait_type": "Rewards Winner",
+            "value": "{yes/no}"
         }
     ]
 }

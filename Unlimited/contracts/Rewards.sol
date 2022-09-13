@@ -7,6 +7,10 @@
     ░░╚██╔╝░╚██╔╝░╚█████╔╝██║░░██║██║██╔╝░░░╚██████╔╝██║░╚███║███████╗██║██║░╚═╝░██║██║░░░██║░░░███████╗██████╔╝
     ░░░╚═╝░░░╚═╝░░░╚════╝░╚═╝░░╚═╝╚═╝╚═╝░░░░░╚═════╝░╚═╝░░╚══╝╚══════╝╚═╝╚═╝░░░░░╚═╝╚═╝░░░╚═╝░░░╚══════╝╚═════╝░
 
+    READ THE TERMS AND CONDITIONS AT http://woai-data.woai.io/terms.html CAREFULLY BEFORE CONFIRMING
+    YOUR INTENT TO BE BOUND BY THEM. WOAI RESERVES THE RIGHT AT ANY TIME, AND FROM TIME TO TIME, TO
+    CHANGE THE TERMS AND CONDITIONS OF THIS NFT CONTRACT WITHOUT NOTICE TO THE NFT HOLDER(S).
+    
  */
 
 // SPDX-License-Identifier: MIT
