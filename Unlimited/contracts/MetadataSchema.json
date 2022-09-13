@@ -1,0 +1,23 @@
+{
+    "image": "{IPFS_URL}",
+    "external_url": "https://unlimited.woai.io/view/{tokenId}",
+    "name": "{tokenName}",  //if len==0: World of AI/Unlimited/{tokenId}
+    "Description": "{generatorValue}",
+    "seller_fee_basis_points": 250,
+    "fee_recipient": "{creator}",
+    "attributes": [
+        {
+            "trait_type": "Engine",
+            "value": "{engineName}"
+        },
+        {
+            "display_type": "date",
+            "trait_type": "Creation Date",
+            "value": {unixTimestampInSecondsOfTransaction}
+        },
+        {
+            "trait_type": "Creator",
+            "value": "{creator}"
+        }
+    ]
+}
